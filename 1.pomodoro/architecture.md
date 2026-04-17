@@ -21,7 +21,7 @@
 ## 3. 想定ディレクトリ構成
 
 ```text
-/workspaces/worshop/
+/workspaces/workshop/
   README.md
   1.pomodoro/
     architecture.md
