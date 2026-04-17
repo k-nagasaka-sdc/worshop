@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pomodoro Timer</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <h1 class="header__title">Pomodoro Timer</h1>
+    </header>
+
+    <main class="main">
+      <!-- フェーズ表示 -->
+      <div class="phase">
+        <span class="phase__label" id="phase-label">集中</span>
+        <span class="phase__set" id="set-count">セット 1 / 4</span>
+      </div>
+
+      <!-- タイマー表示 -->
+      <div class="timer">
+        <span class="timer__display" id="timer-display">25:00</span>
+      </div>
+
+      <!-- 操作ボタン -->
+      <div class="controls">
+        <button class="btn btn--primary" id="btn-start">開始</button>
+        <button class="btn btn--secondary" id="btn-pause" disabled>一時停止</button>
+        <button class="btn btn--secondary" id="btn-reset">リセット</button>
+        <button class="btn btn--ghost" id="btn-skip">スキップ</button>
+      </div>
+
+      <!-- 設定パネル -->
+      <section class="settings" id="settings-panel">
+        <h2 class="settings__title">設定</h2>
+        <form class="settings__form" id="settings-form">
+          <div class="settings__row">
+            <label class="settings__label" for="focus-minutes">集中時間 (分)</label>
+            <input class="settings__input" type="number" id="focus-minutes" name="focus_minutes"
+              min="1" max="60" value="25" />
+          </div>
+          <div class="settings__row">
+            <label class="settings__label" for="short-break-minutes">短休憩 (分)</label>
+            <input class="settings__input" type="number" id="short-break-minutes" name="short_break_minutes"
+              min="1" max="30" value="5" />
+          </div>
+          <div class="settings__row">
+            <label class="settings__label" for="long-break-minutes">長休憩 (分)</label>
+            <input class="settings__input" type="number" id="long-break-minutes" name="long_break_minutes"
+              min="1" max="60" value="15" />
+          </div>
+          <div class="settings__row">
+            <label class="settings__label" for="long-break-interval">長休憩間隔 (セット)</label>
+            <input class="settings__input" type="number" id="long-break-interval" name="long_break_interval"
+              min="1" max="10" value="4" />
+          </div>
+          <button class="btn btn--primary" type="submit">保存</button>
+        </form>
+      </section>
+    </main>
+  </div>
+  <script src="{{ url_for('static', filename='js/timer-core.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+</body>
+</html>
