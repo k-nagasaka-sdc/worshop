@@ -77,6 +77,9 @@ const TimerCore = (() => {
     if (!state.isRunning) {
       return state;
     }
+    if (!state.isRunning) {
+      return state;
+    }
     if (state.remainingSeconds > 0) {
       return { ...state, remainingSeconds: state.remainingSeconds - 1 };
     }
