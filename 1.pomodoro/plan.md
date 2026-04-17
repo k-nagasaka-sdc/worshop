@@ -16,10 +16,10 @@
 
 **目標:** ブラウザ・Flaskなしで状態遷移が正しく動作することをテストで確認
 
-- `timer-core.js` の状態機械と reducer を実装
-  - 状態定義（`idle / focus_running / paused / short_break_running / long_break_running / completed`）
+- `timer-core.js` の状態機械を実装
+  - `phase` + `hasStarted` / `isRunning` による状態管理
   - 各アクションの遷移ロジック
-  - 残時間計算（終了予定時刻との差分方式）
+  - 残時間管理（`remainingSeconds` を減算して更新）
   - 長休憩判定ロジック
 - コアロジックの単体テスト作成（features.md #22）
 

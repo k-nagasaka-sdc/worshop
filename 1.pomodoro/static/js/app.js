@@ -45,10 +45,6 @@ function clearTimerId() {
 
 function onTick() {
   state = TimerCore.tick(state);
-  if (state.remainingSeconds === 0) {
-    // フェーズ切替直後: tick が nextPhase + isRunning=true を返す
-    // → interval は継続
-  }
   render();
 }
 

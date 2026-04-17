@@ -22,9 +22,9 @@
 
 ```text
 /workspaces/worshop/
-  architecture.md
   README.md
   1.pomodoro/
+    architecture.md
     app.py
     templates/
       index.html
@@ -62,7 +62,7 @@
 
 ### 5.1 timer-core.js（純粋ロジック）
 
-- state + action + now を受け取り nextState を返す reducer 方式
+- state を受け取り新しい state を返す関数群で構成
 - DOM操作、API通信、通知処理を含めない
 - 集中/休憩サイクル、残時間、遷移可否をここに集約
 
@@ -90,31 +90,41 @@
 
 ## 6. 状態機械（State Machine）
 
-主要状態:
+実装上の状態は、単一のstate enumではなく、以下の組み合わせで表現します。
 
-- `idle`
-- `focus_running`
-- `short_break_running`
-- `long_break_running`
-- `paused`
-- `completed`
+- `phase`: `focus | short_break | long_break`
+- `hasStarted`: セッション開始済みかどうか
+- `isRunning`: 現在カウントダウン中かどうか
+
+代表的な状態の読み替え:
+
+- 初期状態: `hasStarted = false`（実質的な `idle`）
+- 作業中: `phase = focus` かつ `hasStarted = true` かつ `isRunning = true`
+- 作業一時停止中: `phase = focus` かつ `hasStarted = true` かつ `isRunning = false`
+- 短休憩中: `phase = short_break` かつ `isRunning = true`
+- 長休憩中: `phase = long_break` かつ `isRunning = true`
+- 休憩一時停止中: `phase = short_break | long_break` かつ `hasStarted = true` かつ `isRunning = false`
+
+補足:
+
+- `paused` は独立した単一状態ではなく、「現在の `phase` を維持したまま `isRunning = false`」で表現します。
+- `completed` も独立状態としては持たず、ある `phase` の満了を契機に次の `phase` へ遷移します。
 
 代表遷移:
 
-- `idle -> focus_running`（開始）
-- `focus_running -> paused`（一時停止）
-- `paused -> focus_running`（再開）
-- `focus_running -> short_break_running`（作業完了）
-- 規定セット数ごとに `short_break_running` の代わりに `long_break_running`
-- `break_running -> focus_running`（休憩完了後に次セット）
+- 初期状態 `hasStarted = false` から開始すると、`phase = focus, hasStarted = true, isRunning = true`
+- 実行中に一時停止すると、`phase` は維持したまま `isRunning = false`
+- 一時停止から再開すると、同じ `phase` のまま `isRunning = true`
+- `phase = focus` の完了時、規定セット数に応じて `phase = short_break` または `phase = long_break` に切り替える
+- `phase = short_break | long_break` の完了時、次の `phase = focus` に切り替える
 
 ## 7. タイマー精度方針
 
-- カウント値の減算ではなく、終了予定時刻との差分で残時間を算出
-- `setInterval` は表示更新トリガーとして利用
-- 真実の時間は `now`（Clock）で判定
+- 残時間は `remainingSeconds` を 1 秒ごとに減算して管理
+- `setInterval` は 1 秒ごとの tick と表示更新に利用
+- タブ非アクティブ時などの `setInterval` 遅延により、残時間表示にズレが生じる可能性がある
 
-この方式で、タブ非アクティブ復帰時のズレを最小化します。
+現状は実装の単純さを優先し、この方式を採用します。高精度化が必要になった場合は、終了予定時刻との差分で残時間を算出する方式への移行を検討します。
 
 ## 8. Flask実装方針（テスト対応）
 
