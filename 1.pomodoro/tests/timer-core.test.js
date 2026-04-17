@@ -156,6 +156,23 @@ describe("tick", () => {
     expect(next.phase).toBe("short_break");
     expect(next.isRunning).toBe(true);
   });
+
+  test("停止中に tick しても状態は変わらない", () => {
+    const s = {
+      ...TimerCore.createInitialState(DEFAULT_SETTINGS),
+      isRunning: false,
+      hasStarted: true,
+      remainingSeconds: 100,
+    };
+    const next = TimerCore.tick(s);
+    expect(next).toBe(s);
+  });
+
+  test("未開始で tick しても状態は変わらない", () => {
+    const s = TimerCore.createInitialState(DEFAULT_SETTINGS);
+    const next = TimerCore.tick(s);
+    expect(next).toBe(s);
+  });
 });
 
 // ============================================================
